@@ -39,7 +39,7 @@ def main(url, wordlist):
                         print(f"[+] Found directory /{line} -> [{r.url} | {len(r.content)}]")
                         
                         if urlc <= 4:
-                            os.system(f"""terminator --new-tab -T 'dir {line}' -x 'python3 /home/soundtrack/Desktop/Python_Tools/pybuster.py {url + line}/ {wordlist};read'""")
+                            os.system(f"""terminator --new-tab -T 'dir {line}' -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};read'""")
                             # Need to add status bar and a command that opens a new tab with a title of the dir found.
                         else:
                             continue
