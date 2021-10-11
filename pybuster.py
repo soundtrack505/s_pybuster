@@ -16,10 +16,10 @@ def fixed_length(url, wordlist, size):
 
 
 def main(url, wordlist):
-    while True:
-        try:
-            print(f'[+] Attacking target: {url}')
-            with open(wordlist, 'r') as f:
+    print(f'[+] Attacking target: {url}')
+    with open(wordlist, 'r') as f:
+        while True:
+            try:
                 for line in f.readlines():
                     line = line.replace('\n', '')
                     try:
@@ -37,23 +37,24 @@ def main(url, wordlist):
                     elif r.status_code in range(200, 299) or r.status_code in range(300, 399):
                         urlc = url.count('/') + line.count('/')
                         print(f"[+] Found directory /{line} -> [{r.url} | {len(r.content)}]")
-                        
+
                         if urlc <= 4:
-                            os.system(f"""terminator --new-tab -T 'dir {line}' -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};read'""")
+                            os.system(
+                                f"""terminator --new-tab -T 'dir {line}' -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};read'""")
                             # Need to add status bar and a command that opens a new tab with a title of the dir found.
                         else:
                             continue
                     else:
-                        continue 
+                        continue
                 print("[+] Done!!\nHappy Hacking")
                 break
 
-        except KeyboardInterrupt:
-            done = input("\n[+] Keyboard interrupt detected, do you really want to quit? Y/n -> ")
-            if done.lower() == 'y':
-                sys.exit()
-            else:
-                continue
+            except KeyboardInterrupt:
+                done = input("\n[+] Keyboard interrupt detected, do you really want to quit? Y/n -> ")
+                if done.lower() == 'y':
+                    sys.exit()
+                else:
+                    continue
 
 if __name__ == '__main__':
     # Need to add if the length of the page is the same and has 200 code then to leave it.
