@@ -60,6 +60,8 @@ if __name__ == '__main__':
 
     # Need to add an option to follow recursive on 404 access denied or Forbidden. -F?
 
+    # Need to add -n for no-tab(Not going recursive)
+
     # Need to to do if there is a tls then to bypass it(verify=False) -k.
     # parser = argparse.ArgumentParser()
     # parser.parse_args()
