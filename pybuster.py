@@ -35,7 +35,7 @@ def main(url, wordlist):
                             continue
 
                     elif r.status_code in range(200, 299) or r.status_code in range(300, 399):
-                        print(f"[+] Found directory /{line} -> {r.url}")
+                        print(f"[+] Found directory /{line} -> [{r.url} | {len(r.content)}]")
                         os.system(f"""terminator --new-tab -T 'dir {line}' -x 'python3 /home/soundtrack/Desktop/Python_Tools/pybuster.py {url + line}/ {wordlist};read'""")
                         # Need to add status bar and a command that opens a new tab with a title of the dir found.
 
