@@ -63,6 +63,8 @@ if __name__ == '__main__':
 
     # Need to add option for extensions -x php,html,sh.
 
+    # Need to add full recursive(No restrict)
+
     # Need to add an option to follow recursive on 404 access denied or Forbidden. -F?
 
     # Need to add -n for no-tab(Not going recursive)
