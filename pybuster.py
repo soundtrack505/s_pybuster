@@ -85,6 +85,6 @@ if __name__ == '__main__':
     # url = "http://10.10.99.130/"
     # wordlist = "/home/soundtrack/Desktop/word.txt"
 
-    s = requests.session()
+    s = requests.Session()
 
     main(url, wordlist, s)
