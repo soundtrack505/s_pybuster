@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from tqdm import tqdm
 import os
 import requests
 # import argparse
@@ -17,11 +18,16 @@ def fixed_length(url, wordlist, size):
 
 def main(url, wordlist):
     print(f'[+] Attacking target: {url}')
+    index = 1
     with open(wordlist, 'r') as f:
+        f = f.readlines()
+        sum_lines = len(f)
         while True:
             try:
-                for line in f.readlines():
+                for line in f:
                     line = line.replace('\n', '')
+                    index += 1
+                    print(f"left: {index}/{sum_lines}   -> /{line}")
                     try:
                         r = requests.get(url + line, allow_redirects=True, verify=False, timeout=0.5)
                     except Exception:
@@ -39,13 +45,14 @@ def main(url, wordlist):
                         print(f"[+] Found directory /{line} -> [{r.url} | {len(r.content)}]")
 
                         if urlc <= 4:
-                            os.system(
-                                f"""terminator --new-tab -T 'dir {line}' -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};read'""")
+                            os.system(f"""terminator -T 'dir {line} '--new-tab -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};echo "\n\033[1;33mPress ENTER to continue";read'""")
                             # Need to add status bar and a command that opens a new tab with a title of the dir found.
                         else:
                             continue
                     else:
                         continue
+
+
                 print("[+] Done!!\nHappy Hacking")
                 break
 
@@ -55,6 +62,7 @@ def main(url, wordlist):
                     sys.exit()
                 else:
                     continue
+
 
 if __name__ == '__main__':
     # Need to add if the length of the page is the same and has 200 code then to leave it.
@@ -73,8 +81,11 @@ if __name__ == '__main__':
     # parser = argparse.ArgumentParser()
     # parser.parse_args()
 
-    url = sys.argv[1]
-    wordlist = sys.argv[2]
+    # url = sys.argv[1]
+    # wordlist = sys.argv[2]
+
+    url = "http://10.10.99.130/"
+    wordlist = "/home/soundtrack/Desktop/word.txt"
 
     # p1 = mp.Process(target=read_file, args=(url, wordlist,))
     # p1.start()
