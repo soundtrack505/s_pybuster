@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-from tqdm import tqdm
 import os
 import requests
 # import argparse
@@ -79,11 +78,14 @@ if __name__ == '__main__':
     # parser = argparse.ArgumentParser()
     # parser.parse_args()
 
-    url = sys.argv[1]
-    wordlist = sys.argv[2]
-
     # url = "http://10.10.99.130/"
     # wordlist = "/home/soundtrack/Desktop/word.txt"
+
+    if len(sys.argv) < 2:
+        print("[-] usage pybuster.py <Target_IP> <Wordlist>")
+
+    url = sys.argv[1]
+    wordlist = sys.argv[2]
 
     s = requests.Session()
 
