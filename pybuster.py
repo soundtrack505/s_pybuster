@@ -16,7 +16,7 @@ def fixed_length(url, wordlist, size):
     pass
 
 
-def main(url, wordlist):
+def main(url, wordlist, session):
     print(f'[+] Attacking target: {url}')
     index = 1
     with open(wordlist, 'r') as f:
@@ -26,12 +26,12 @@ def main(url, wordlist):
             try:
                 for line in f:
                     line = line.replace('\n', '')
-                    index += 1
                     print(f"left: {index}/{sum_lines}   -> /{line}")
+                    index += 1
                     try:
-                        r = requests.get(url + line, allow_redirects=True, verify=False, timeout=0.5)
+                        r = session.get(url + line, allow_redirects=True, verify=False, timeout=0.5)
                     except Exception:
-                        r = requests.get(url + line, allow_redirects=True, verify=False)
+                        r = session.get(url + line, allow_redirects=True, verify=False)
 
                     if r.status_code in range(400, 499):
                         if "Access Denied" in r.text or "Forbidden" in r.text:
@@ -51,7 +51,6 @@ def main(url, wordlist):
                             continue
                     else:
                         continue
-
 
                 print("[+] Done!!\nHappy Hacking")
                 break
@@ -77,17 +76,15 @@ if __name__ == '__main__':
 
     # Need to add -n for no-tab(Not going recursive)
 
-    # Need to to do if there is a tls then to bypass it(verify=False) -k.
     # parser = argparse.ArgumentParser()
     # parser.parse_args()
 
-    # url = sys.argv[1]
-    # wordlist = sys.argv[2]
+    url = sys.argv[1]
+    wordlist = sys.argv[2]
 
-    url = "http://10.10.99.130/"
-    wordlist = "/home/soundtrack/Desktop/word.txt"
+    # url = "http://10.10.99.130/"
+    # wordlist = "/home/soundtrack/Desktop/word.txt"
 
-    # p1 = mp.Process(target=read_file, args=(url, wordlist,))
-    # p1.start()
+    s = requests.session()
 
-    main(url, wordlist)
+    main(url, wordlist, s)
