@@ -2,8 +2,10 @@
 
 import os
 import requests
+from random import choice
 # import argparse
 # import colorama
+from threading import Thread
 import sys
 
 
@@ -13,6 +15,37 @@ def extensions(url, wordlist, extension):
 
 def fixed_length(url, wordlist, size):
     pass
+
+
+def new_thread(url, se, wlt):
+    with open(wlt, 'r') as wl:
+        while True:
+            for w in wl.readlines():
+                w = w.replace('\n', '')
+                # print("test: ", url + w)
+                req = se.get(url + w, allow_redirects=True, verify=False, timeout=0.5)
+                # print(f"started a new thread, testing url: {req.url}")
+                if req.status_code in range(400, 499):
+                    if "Access Denied" in req.text or "Forbidden" in req.text:
+                        print(f"[-] Found /{w}  directory but you don't have access to it")
+                    else:
+                        # print(line)
+                        continue
+
+                elif req.status_code in range(200, 299) or req.status_code in range(300, 399):
+                    urlc = url.count('/') + w.count('/')
+                    print(f"[+] Found directory /{w} -> [{req.url} | {len(req.content)}]")
+
+                    if urlc <= 4:
+                        t = Thread(target=new_thread, args=(url + w + '/', s, wordlist))
+                        t.daemon = True
+                        t.start()
+                        # os.system(f"""terminator -T 'dir {line} '--new-tab -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};echo "\n\033[1;33mPress ENTER to continue";read'""")
+                        # Need to add status bar and a command that opens a new tab with a title of the dir found.
+                    else:
+                        continue
+                else:
+                    continue
 
 
 def main(url, wordlist, session):
@@ -25,7 +58,7 @@ def main(url, wordlist, session):
             try:
                 for line in f:
                     line = line.replace('\n', '')
-                    print(f"left: {index}/{sum_lines}   -> /{line}")
+                    # print(f"left: {index}/{sum_lines}   -> /{line}")
                     index += 1
                     try:
                         r = session.get(url + line, allow_redirects=True, verify=False, timeout=0.5)
@@ -44,7 +77,10 @@ def main(url, wordlist, session):
                         print(f"[+] Found directory /{line} -> [{r.url} | {len(r.content)}]")
 
                         if urlc <= 4:
-                            os.system(f"""terminator -T 'dir {line} '--new-tab -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};echo "\n\033[1;33mPress ENTER to continue";read'""")
+                            t = Thread(target=new_thread, args=(url + line + '/', session, wordlist))
+                            t.daemon = True
+                            t.start()
+                            # os.system(f"""terminator -T 'dir {line} '--new-tab -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};echo "\n\033[1;33mPress ENTER to continue";read'""")
                             # Need to add status bar and a command that opens a new tab with a title of the dir found.
                         else:
                             continue
@@ -79,14 +115,11 @@ if __name__ == '__main__':
     # parser = argparse.ArgumentParser()
     # parser.parse_args()
 
-    # url = "http://10.10.99.130/"
-    # wordlist = "/home/soundtrack/Desktop/word.txt"
+    url = "http://127.0.0.1/"
+    wordlist = "/home/soundtrack/Desktop/word.txt"
 
-    if len(sys.argv) < 2:
-        print("[-] usage pybuster.py <Target_IP> <Wordlist>")
-
-    url = sys.argv[1]
-    wordlist = sys.argv[2]
+    # url = sys.argv[1]
+    # wordlist = sys.argv[2]
 
     s = requests.Session()
 
