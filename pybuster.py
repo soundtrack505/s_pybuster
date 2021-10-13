@@ -46,6 +46,7 @@ def new_thread(url, se, wlt):
                         continue
                 else:
                     continue
+            break
 
 
 def main(url, wordlist, session):
