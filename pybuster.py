@@ -63,6 +63,7 @@ def main(url, wordlist, session):
 
 
 if __name__ == '__main__':
+    # Insted of opening multitabs I need can create a thred that go recursive in the same search
     # Need to add if the length of the page is the same and has 200 code then to leave it.
     # Need to add an option for fix length like: if the 404(200 code) page's length is 450 then do the command below:
     # if r.status_code in range(200, 299) and len(r.content > {user_fixed_size})
