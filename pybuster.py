@@ -1,10 +1,11 @@
 #!/usr/bin/python3
+import time
 
-import os
+from tqdm import tqdm
 import urllib3
 import requests
 from random import choice
-# import argparse
+import argparse
 # import colorama
 from threading import Thread
 import sys
@@ -29,7 +30,7 @@ def fixed_length(url, wordlist, se, size):
                 # print(f"started a new thread, testing url: {req.url}")
                 if req.status_code in range(400, 499):
                     if "Access" in req.text or "Forbidden" in req.text:
-                        print(f"[-] Found /{w}  directory but you don't have access to it")
+                        print(f"\n[-] Found /{w}  directory but you don't have access to it")
                     else:
                         # print(line)
                         continue
@@ -37,7 +38,7 @@ def fixed_length(url, wordlist, se, size):
                 elif req.status_code in range(200, 299) or req.status_code in range(300, 399) \
                         and len(req.content > {size}):
                     urlc = url.count('/') + w.count('/')
-                    print(f"[+] Found directory /{w} -> [{req.url} | {len(req.content)}]")
+                    print(f"\n[+] Found directory /{w} -> [{req.url} | {len(req.content)}]")
 
                     if urlc <= 4:
                         pass
@@ -67,17 +68,17 @@ def new_thread(url, se, wlt):
                 # print(f"started a new thread, testing url: {req.url}")
                 if req.status_code in range(400, 499):
                     if "Access" in req.text or "Forbidden" in req.text:
-                        print(f"[-] Found /{w}  directory but you don't have access to it")
+                        print(f"\n[-] Found /{w}  directory but you don't have access to it")
                     else:
                         # print(line)
                         continue
 
                 elif req.status_code in range(200, 299) or req.status_code in range(300, 399):
                     urlc = url.count('/') + w.count('/')
-                    print(f"[+] Found directory /{w} -> [{req.url} | {len(req.content)}]")
+                    print(f"\n[+] Found directory /{w} -> [{req.url} | {len(req.content)}]")
 
                     if urlc <= 4:
-                        t = Thread(target=new_thread, args=(url + w + '/', s, wordlist))
+                        t = Thread(target=new_thread, args=(url + w + '/', s, wlt))
                         t.daemon = True
                         t.start()
                         # os.system(f"""terminator -T 'dir {line} '--new-tab -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};echo "\n\033[1;33mPress ENTER to continue";read'""")
@@ -96,10 +97,13 @@ def main(url, wordlist, session):
     with open(wordlist, 'r') as f:
         f = f.readlines()
         sum_lines = len(f)
+
         while True:
             try:
                 for line in f:
                     line = line.replace('\n', '')
+
+                    sys.stdout.write('\r' + f"left: {index}/{sum_lines} -> /{line}")
                     # print(f"left: {index}/{sum_lines}   -> /{line}")
                     index += 1
                     try:
@@ -109,14 +113,14 @@ def main(url, wordlist, session):
 
                     if r.status_code in range(400, 499):
                         if "Access" in r.text or "Forbidden" in r.text:
-                            print(f"[-] Found /{line}  directory but you don't have access to it")
+                            print(f"\n[-] Found /{line}  directory but you don't have access to it")
                         else:
                             # print(line)
                             continue
 
                     elif r.status_code in range(200, 299) or r.status_code in range(300, 399):
                         urlc = url.count('/') + line.count('/')
-                        print(f"[+] Found directory /{line} -> [{r.url} | {len(r.content)}]")
+                        print(f"\n[+] Found directory /{line} -> [{r.url} | {len(r.content)}]")
 
                         if urlc <= 4:
                             t = Thread(target=new_thread, args=(url + line + '/', session, wordlist))
@@ -151,19 +155,19 @@ if __name__ == '__main__':
 
     # Need to add an option to follow recursive on 404 access denied or Forbidden. -F?
 
-    # parser = argparse.ArgumentParser()
-    # parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.parse_args()
 
-    # url = "http://127.0.0.1/"
-    # wordlist = "/home/soundtrack/Desktop/word.txt"
+    url = "http://127.0.0.1/"
+    wordlist = "/home/soundtrack/Desktop/word.txt"
 
-    url = sys.argv[1]
-    wordlist = sys.argv[2]
+    # url = sys.argv[1]
+    # wordlist = sys.argv[2]
 
-    length = sys.argv[3]
+    # length = sys.argv[3]
 
     s = requests.Session()
 
-    fixed_length(url, wordlist, s, length)
+    # fixed_length(url, wordlist, s, length)
 
-    # main(url, wordlist, s)
+    main(url, wordlist, s)
