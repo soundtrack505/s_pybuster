@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import os
+import urllib3
 import requests
 from random import choice
 # import argparse
@@ -10,14 +11,17 @@ import sys
 
 
 def extensions(url, wordlist, extension):
+    urllib3.disable_warnings()
     pass
 
 
 def fixed_length(url, wordlist, size):
+    urllib3.disable_warnings()
     pass
 
 
 def new_thread(url, se, wlt):
+    urllib3.disable_warnings()
     with open(wlt, 'r') as wl:
         while True:
             for w in wl.readlines():
@@ -50,6 +54,7 @@ def new_thread(url, se, wlt):
 
 
 def main(url, wordlist, session):
+    urllib3.disable_warnings()
     print(f'[+] Attacking target: {url}')
     index = 1
     with open(wordlist, 'r') as f:
