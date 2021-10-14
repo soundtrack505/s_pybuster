@@ -27,7 +27,10 @@ def new_thread(url, se, wlt):
             for w in wl.readlines():
                 w = w.replace('\n', '')
                 # print("test: ", url + w)
-                req = se.get(url + w, allow_redirects=True, verify=False, timeout=0.5)
+                try:
+                    req = se.get(url + line, allow_redirects=True, verify=False, timeout=0.5)
+                except Exception:
+                    req = se.get(url + line, allow_redirects=True, verify=False)
                 # print(f"started a new thread, testing url: {req.url}")
                 if req.status_code in range(400, 499):
                     if "Access Denied" in req.text or "Forbidden" in req.text:
