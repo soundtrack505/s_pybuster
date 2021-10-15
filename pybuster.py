@@ -45,8 +45,6 @@ def fixed_length(url, wordlist, se, size):
                         # t = Thread(target=new_thread, args=(url + w + '/', s, wordlist))
                         # t.daemon = True
                         # t.start()
-                        # os.system(f"""terminator -T 'dir {line} '--new-tab -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};echo "\n\033[1;33mPress ENTER to continue";read'""")
-                        # Need to add status bar and a command that opens a new tab with a title of the dir found.
                     else:
                         continue
                 else:
@@ -81,8 +79,6 @@ def new_thread(url, se, wlt):
                         t = Thread(target=new_thread, args=(url + w + '/', s, wlt))
                         t.daemon = True
                         t.start()
-                        # os.system(f"""terminator -T 'dir {line} '--new-tab -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};echo "\n\033[1;33mPress ENTER to continue";read'""")
-                        # Need to add status bar and a command that opens a new tab with a title of the dir found.
                     else:
                         continue
                 else:
@@ -102,8 +98,9 @@ def main(url, wordlist, session):
             try:
                 for line in f:
                     line = line.replace('\n', '')
-
-                    sys.stdout.write('\r' + f"left: {index}/{sum_lines} -> /{line}")
+                    
+                    
+                    sys.stdout.write('\r' + f"Prograss: {index}/{sum_lines} -> /{line}")
                     # print(f"left: {index}/{sum_lines}   -> /{line}")
                     index += 1
                     try:
@@ -126,8 +123,6 @@ def main(url, wordlist, session):
                             t = Thread(target=new_thread, args=(url + line + '/', session, wordlist))
                             t.daemon = True
                             t.start()
-                            # os.system(f"""terminator -T 'dir {line} '--new-tab -x 'python3 /home/$USER/pybuster/pybuster.py {url + line}/ {wordlist};echo "\n\033[1;33mPress ENTER to continue";read'""")
-                            # Need to add status bar and a command that opens a new tab with a title of the dir found.
                         else:
                             continue
                     else:
