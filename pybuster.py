@@ -166,7 +166,6 @@ def full_recursive(url, wordlist, session):
                             continue
 
                     elif r.status_code in range(200, 299) or r.status_code in range(300, 399):
-                        url_counter = url.count('/') + line.count('/')
                         print(f"\n[+] Found directory /{line} -> [{r.url} | {len(r.content)}]\n")
                         t = Thread(target=new_thread, args=(url + line + '/', session, wordlist))
                         t.daemon = True
