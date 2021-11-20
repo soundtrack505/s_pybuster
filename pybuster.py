@@ -1,7 +1,13 @@
 #!/usr/bin/python3
+
+"""
+Created by: Yerom Hemo
+Point: I was sick from gobuster and dirb no going recursive as soon as they find a hit so I created this program
+I will try to make it faster in the future.
+"""
+
 import urllib3
 import requests
-from random import choice
 # import colorama
 from threading import Thread
 import sys
@@ -288,16 +294,42 @@ def follow_404(url, wordlist, session):
 
 if __name__ == '__main__':
     # Fuck argparse do inputs and thats it!
+    # When I open the menu I need to open a new terminal for it like my other project.
     try:
-        s = requests.Session()
-        # url = 'http://127.0.0.1/'
-        # wordlist = '/home/soundtrack/Desktop/word.txt'
+        session = requests.Session()
         url = sys.argv[1]
         wordlist = sys.argv[2]
-
-        main(url, wordlist, s)
-        # ex = "php,html,cgi"
-        # ex = ex.split(',')
-        # extensions(url, wordlist, s, ex)
     except IndexError:
-        print("Usage: pybuster.py http[s]://domain.com/ wordlist_path")
+        print("Usage: pybuster.py http[s]://domain.com/ wordlist_path\nIt will then open a menu for you.")
+        exit()
+    # Menu 
+    while True:
+        try:
+            menu = input("""
+0)  exit                         # Will exit the program.
+1)  Normal Scan                  # Will scan only recursive onces .
+2)  Full Recursice Scan          # Will go inside every directory.
+3)  Follow 404 Scan              # Will follow the 404 to find files or dirs.
+4)  Fixed lenghth Scan           # Will ignore page with the fixed lenghth.
+> """)
+
+            if menu == '0':
+                print("Exiting....")
+                exit()
+            
+            elif menu == '1':
+                main(url, wordlist, session)
+            
+            elif menu == '2':
+                pass
+            
+            elif menu == '3':
+                pass
+            
+            elif menu == '4':
+                pass
+            
+
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            break
