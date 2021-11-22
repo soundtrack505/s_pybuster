@@ -37,7 +37,7 @@ def new_thread(url, wlt, se):
                     print(f"\n[+] Found directory {url.split('/')[3]}/{w} -> [{req.url} | {len(req.content)}]\n")
 
                     if urlc <= 4:
-                        t = Thread(target=new_thread, args=(url + w + '/', wlt, s))
+                        t = Thread(target=new_thread, args=(url + w + '/', wlt, se))
                         t.daemon = True
                         t.start()
                     else:
@@ -59,7 +59,7 @@ def extensions(url, wordlist, ses, extension):
             try:
                 for line in f:
                     line = line.replace('\n', '')
-                    sys.stdout.write('\r' + f"Prograss: {index}/{sum_lines} -> /{line}")
+                    sys.stdout.write('\r' + f"Prograss: {index}/{sum_lines}")
                     index += 1
                     for ext in extension:
                         print(f'{line}.{ext}')
@@ -99,7 +99,7 @@ def extensions(url, wordlist, ses, extension):
             except KeyboardInterrupt:
                 done = input("\n[+] Keyboard interrupt detected, do you really want to quit? Y/n -> ")
                 if done.lower() == 'y':
-                    sys.exit()
+                    break
                 else:
                     continue
 
@@ -108,36 +108,43 @@ def fixed_length(url, wordlist, se, size):
     urllib3.disable_warnings()
     with open(wordlist, 'r') as wl:
         while True:
-            for w in wl.readlines():
-                w = w.replace('\n', '')
+            try:
+                for w in wl.readlines():
+                    w = w.replace('\n', '')
 
-                try:
-                    req = se.get(url + w, allow_redirects=True, verify=False, timeout=0.5)
-                except Exception:
-                    req = se.get(url + w, allow_redirects=True, verify=False)
+                    try:
+                        req = se.get(url + w, allow_redirects=True, verify=False, timeout=0.5)
+                    except Exception:
+                        req = se.get(url + w, allow_redirects=True, verify=False)
 
-                if req.status_code in range(400, 499):
-                    if "Access" in req.text or "Forbidden" in req.text:
-                        print(f"\n[-] Found /{w}  directory but you don't have access to it\n")
+                    if req.status_code in range(400, 499):
+                        if "Access" in req.text or "Forbidden" in req.text:
+                            print(f"\n[-] Found /{w}  directory but you don't have access to it\n")
+                        else:
+                            # print(line)
+                            continue
+
+                    elif req.status_code in range(200, 299) or req.status_code in range(300, 399) \
+                            and len(req.content) > size:
+                        url_counter = url.count('/') + w.count('/')
+                        print(f"\n[+] Found directory /{w} -> [url: {req.url} |status_code: {req.status_code} \
+                        | content_length: {len(req.content)}]\n")
+
+                        if url_counter <= 4:
+                            pass
+                            # t = Thread(target=new_thread, args=(url + w + '/', s, wordlist))
+                            # t.daemon = True
+                            # t.start()
+                        else:
+                            continue
                     else:
-                        # print(line)
                         continue
-
-                elif req.status_code in range(200, 299) or req.status_code in range(300, 399) \
-                        and len(req.content > {size}):
-                    url_counter = url.count('/') + w.count('/')
-                    print(f"\n[+] Found directory /{w} -> [{req.url} | {len(req.content)}]\n")
-
-                    if url_counter <= 4:
-                        pass
-                        # t = Thread(target=new_thread, args=(url + w + '/', s, wordlist))
-                        # t.daemon = True
-                        # t.start()
-                    else:
-                        continue
+            except KeyboardInterrupt:
+                done = input("\n[+] Keyboard interrupt detected, do you really want to quit? Y/n -> ")
+                if done.lower() == 'y':
+                    break
                 else:
                     continue
-            break
 
 
 def main(url, wordlist, session):
@@ -152,7 +159,7 @@ def main(url, wordlist, session):
             try:
                 for line in f:
                     line = line.replace('\n', '')
-                    sys.stdout.write('\r' + f"Prograss: {index}/{sum_lines} -> /" + line)
+                    sys.stdout.write('\r' + f"Prograss: {index}/{sum_lines}")
                     index += 1
                     try:
                         r = session.get(url + line, allow_redirects=True, verify=False, timeout=0.5)
@@ -186,7 +193,7 @@ def main(url, wordlist, session):
             except KeyboardInterrupt:
                 done = input("\n[+] Keyboard interrupt detected, do you really want to quit? Y/n -> ")
                 if done.lower() == 'y':
-                    sys.exit()
+                    break
                 else:
                     continue
 
@@ -293,24 +300,29 @@ def follow_404(url, wordlist, session):
 
 
 if __name__ == '__main__':
-    # Fuck argparse do inputs and thats it!
     # When I open the menu I need to open a new terminal for it like my other project.
     try:
         session = requests.Session()
         url = sys.argv[1]
         wordlist = sys.argv[2]
+        auto_save = "off"
     except IndexError:
         print("Usage: pybuster.py http[s]://domain.com/ wordlist_path\nIt will then open a menu for you.")
         exit()
     # Menu 
     while True:
         try:
-            menu = input("""
+            menu = input(f"""
+URL: {url}
+wordlist: {wordlist}
+AutoSave: {auto_save}
+
 0)  exit                         # Will exit the program.
-1)  Normal Scan                  # Will scan only recursive onces .
-2)  Full Recursice Scan          # Will go inside every directory.
+1)  Normal Scan                  # Will scan recursive only once.
+2)  Full Recursive Scan          # Will go inside every directory it finds.
 3)  Follow 404 Scan              # Will follow the 404 to find files or dirs.
-4)  Fixed lenghth Scan           # Will ignore page with the fixed lenghth.
+4)  Fixed length Scan            # Will ignore page with the fixed length.
+99) Auto Save Output             # Will auto save your work to a file.
 > """)
 
             if menu == '0':
@@ -327,9 +339,19 @@ if __name__ == '__main__':
                 pass
             
             elif menu == '4':
-                pass
-            
+                fixed_length_number = input("Enter the fixed number > ")
+                fixed_length(url, wordlist, session, fixed_length_number)
+
+            if menu == '99':
+                if auto_save == 'On':
+                    auto_save = 'Off'
+                else:
+                    auto_save = "On"
 
         except KeyboardInterrupt:
-            print("\nExiting...")
-            break
+            a = input("Are you sure you want to exit the main program? Y/n > ")
+            if a.lower() == "y":
+                print("\nExiting...")
+                break
+            else:
+                continue
