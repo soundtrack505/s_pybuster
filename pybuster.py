@@ -362,6 +362,10 @@ AutoSave: {auto_save}
                 continue
                 
 """
+
+## Need to copy new_thread and create it for the fixed length one.
+
+
 in the setup.py add a line that add to the .bashrc and the .zshrc an alias
 alias pybuster="python3.9 /opt/pybuster.py"
 need to change the location of the script to opt
