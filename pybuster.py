@@ -246,7 +246,7 @@ def full_recursive(url, wordlist, session):
                     continue
 
 
-def follow_404(url, wordlist, session):
+def follow_403(url, wordlist, session):
     urllib3.disable_warnings()
     print(f'[+] Attacking target: {url}')
     index = 1
@@ -300,12 +300,11 @@ def follow_404(url, wordlist, session):
 
 
 if __name__ == '__main__':
-    # When I open the menu I need to open a new terminal for it like my other project.
+    session = requests.Session()
+    auto_save = "off"
     try:
-        session = requests.Session()
         url = sys.argv[1]
         wordlist = sys.argv[2]
-        auto_save = "off"
     except IndexError:
         print("Usage: pybuster.py http[s]://domain.com/ wordlist_path\nIt will then open a menu for you.")
         exit()
@@ -320,8 +319,9 @@ AutoSave: {auto_save}
 0)  exit                         # Will exit the program.
 1)  Normal Scan                  # Will scan recursive only once.
 2)  Full Recursive Scan          # Will go inside every directory it finds.
-3)  Follow 404 Scan              # Will follow the 404 to find files or dirs.
+3)  Follow 403 Scan              # Will follow the 403 to find files or dirs.
 4)  Fixed length Scan            # Will ignore page with the fixed length.
+5)  Extension Scan               # Will add an extensions to your wordlist.
 99) Auto Save Output             # Will auto save your work to a file.
 > """)
 
@@ -333,16 +333,21 @@ AutoSave: {auto_save}
                 main(url, wordlist, session)
             
             elif menu == '2':
-                pass
+                full_recursive(url, wordlist, session)
             
             elif menu == '3':
-                pass
+                follow_403(url, wordlist, session)
             
             elif menu == '4':
                 fixed_length_number = input("Enter the fixed number > ")
                 fixed_length(url, wordlist, session, fixed_length_number)
 
-            if menu == '99':
+            elif menu == '5':
+                print("Use , to separate the words:                #Don't use spaces!!!\nExample: php,txt,html,aspx...")
+                extension = input("Enter the extensions > ")
+                extensions(url, wordlist, session, extension)
+
+            elif menu == '99':
                 if auto_save == 'On':
                     auto_save = 'Off'
                 else:
