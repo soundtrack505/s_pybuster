@@ -1,7 +1,6 @@
 # pybuster
-A slow as hell directory searching writing in python but gos requesive when getting a hit.
+A slow as hell directory searching writing in python but gos recursive when getting a hit.
 
 # installation
-sudo apt install terminator
-
-pip3 install -r requirements.txt
+python3 setup.py.
+It will take care of the rest.
