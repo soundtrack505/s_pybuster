@@ -343,9 +343,12 @@ AutoSave: {auto_save}
                 fixed_length(url, wordlist, session, fixed_length_number)
 
             elif menu == '5':
-                print("Use , to separate the words:                #Don't use spaces!!!\nExample: php,txt,html,aspx...")
+                print("Use , to separate the words:               # Don't use spaces!!!\nExample: php,txt,html,aspx...")
                 extension = input("Enter the extensions > ")
-                extensions(url, wordlist, session, extension)
+                if " " in extension:
+                    print("Space was detected.")
+                else:
+                    extensions(url, wordlist, session, extension)
 
             elif menu == '99':
                 if auto_save == 'On':
@@ -362,11 +365,5 @@ AutoSave: {auto_save}
                 continue
                 
 """
-
 ## Need to copy new_thread and create it for the fixed length one.
-
-
-in the setup.py add a line that add to the .bashrc and the .zshrc an alias
-alias pybuster="python3.9 /opt/pybuster.py"
-need to change the location of the script to opt
 """
