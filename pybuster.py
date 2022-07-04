@@ -1,11 +1,5 @@
 #!/usr/bin/python3
 
-"""
-Created by: Yerom Hemo
-Point: I was sick from gobuster and dirb not going recursive as soon as they find a hit so I created this program
-I will try to make it faster in the future.
-"""
-
 import urllib3
 import requests
 # import colorama
