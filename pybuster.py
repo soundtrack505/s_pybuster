@@ -2,7 +2,7 @@
 
 import urllib3
 import requests
-# import colorama
+from  colorama import Fore, Back, Style
 from threading import Thread
 import sys
 
