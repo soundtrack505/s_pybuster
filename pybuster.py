@@ -52,7 +52,7 @@ def extensions(url, wordlist, ses, extension):
             try:
                 for line in f:
                     line = line.replace('\n', '')
-                    sys.stdout.write('\r' + f"Prograss: {index}/{sum_lines}")
+                    sys.stdout.write('\r' + f"Progress: {index}/{sum_lines}")
                     index += 1
                     exten = extension.split(',')
 
@@ -79,7 +79,7 @@ def extensions(url, wordlist, ses, extension):
 
                         elif r.status_code in range(200, 299) or r.status_code in range(300, 399):
                             url_counter = url.count('/') + line.count('/')
-                            if f'.{ext}' in r.url:
+                            if f'.' in r.url.split("/")[3]:
                                 print(f"\n[+] Found file /{line}{ext} -> [URL: {r.url} | \
 Content_Length: {len(r.content)} | Status_code: {r.status_code}]\n")
                             else:
@@ -87,7 +87,7 @@ Content_Length: {len(r.content)} | Status_code: {r.status_code}]\n")
  {len(r.content)} | Status_code: {r.status_code}]\n")
 
                                 if url_counter <= 4:
-                                    t = Thread(target=new_thread, args=(url + line + '/', ses, wordlist))
+                                    t = Thread(target=new_thread, args=(url + line + '/', wordlist, ses))
                                     t.daemon = True
                                     t.start()
                                 else:
@@ -218,7 +218,7 @@ def full_recursive(url, wordlist, session):
             try:
                 for line in f:
                     line = line.replace('\n', '')
-                    sys.stdout.write('\r' + f"Prograss: {index}/{sum_lines} -> /{line}")
+                    sys.stdout.write('\r' + f"Progress: {index}/{sum_lines} -> /{line}")
                     index += 1
                     try:
                         r = session.get(url + line, allow_redirects=True, verify=False, timeout=0.5)
@@ -267,7 +267,7 @@ def follow_403(url, wordlist, session):
             try:
                 for line in f:
                     line = line.replace('\n', '')
-                    sys.stdout.write('\r' + f"Prograss: {index}/{sum_lines} -> /{line}")
+                    sys.stdout.write('\r' + f"Progress: {index}/{sum_lines} -> /{line}")
                     index += 1
                     try:
                         r = session.get(url + line, allow_redirects=True, verify=False, timeout=0.5)
@@ -391,13 +391,14 @@ Type help to see what every thing does.
                 fixed_length(url, wordlist, session, fixed_length_number)
 
             elif menu == '5':
-                print("Use , to separate the words:               # Don't use spaces!!!\nExample: php,txt,html,aspx...")
+                print("Use , to separate the words:\nExample: php,txt,html,aspx...")
                 extension_input = input("Enter the extensions > ")
                 if " " in extension_input:
-                    print("Space was detected.")
-                else:
-                    extension_input += "," + ""
-                    extensions(url, wordlist, session, extension_input)
+                    extension_input = extension_input.split(" ")
+
+                extension_input = ''.join(extension_input)
+                extension_input += "," + ""
+                extensions(url, wordlist, session, extension_input)
 
             elif menu == '99':
                 if auto_save == 'On':
